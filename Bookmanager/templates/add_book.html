@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加书籍</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.css">
+</head>
+<body>
+
+<div class="container">
+    <form class="form-horizontal" action="{% url 'add_book' %}" method="post" novalidate>
+    {% csrf_token %}
+        <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">书名</label>
+            <div class="col-sm-10">
+                <input type="text" id="name" class="form-control" placeholder="name"  name="name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="price" class="col-sm-2 control-label">价格</label>
+            <div class="col-sm-10">
+                <input type="number" id="price" class="form-control" placeholder="price" required="" autofocus="" name="price">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="date" class="col-sm-2 control-label">出版日期</label>
+            <div class="col-sm-10">
+                <input type="date" id="date" class="form-control" placeholder="date" name="date">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="publish" class="col-sm-2 control-label">出版社</label>
+            <div class="col-sm-10">
+                <select name="publish" id="publish" class="form-control">
+                    {% for publisher in publishers %}
+                        <option value="{{ publisher.id }}">{{ publisher.name }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="authors" class="col-sm-2 control-label">作者</label>
+            <div class="col-sm-10">
+                <select name="authors" id="authors" class="form-control" multiple>
+                    {% for author in authors %}
+                        <option value="{{ author.id }}">{{ author.name }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">提交</button>
+    </form>
+
+</div>
+
+
+</body>
+</html>

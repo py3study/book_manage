@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/plugins/sweetalert/sweetalert.css">
+    <script src="/static/plugins/sweetalert/sweetalert-dev.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
+
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+{#                <li><a href="#">{{ request.COOKIES.user }}</a></li> #}
+{#                <li><a href="#">{{ request.COOKIES.last_time }}</a></li>#}
+                <li><a href="#">{{ request.session.user }}</a></li>
+                <li><a href="#">{{ request.session.last_time|slice:':19' }}</a></li>
+                <li><a href="{% url 'logout' %}">注销</a></li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <input type="text" class="form-control" placeholder="Search...">
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Reports</a></li>
+                <li><a href="#">Analytics</a></li>
+                <li><a href="#">Export</a></li>
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="">Nav item</a></li>
+                <li><a href="">Nav item again</a></li>
+                <li><a href="">One more nav</a></li>
+                <li><a href="">Another nav item</a></li>
+                <li><a href="">More navigation</a></li>
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="">Nav item again</a></li>
+                <li><a href="">One more nav</a></li>
+                <li><a href="">Another nav item</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <a href="{% url 'add_book' %}" class="btn btn-primary">添加</a>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>书名</th>
+                    <th>价格</th>
+                    <th>出版日期</th>
+                    <th>出版社</th>
+                    <th>作者</th>
+                    <th>操作</th>
+                </tr>
+                {% for book in books %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.price }}</td>
+                        <td>{{ book.pub_date|date:"Y-m-d" }}</td>
+                        <td>{{ book.publish.name }}</td>
+                        <td>
+                            {% for author in book.authors.all %}
+                                {% if forloop.last %}
+                                    {{ author.name }}
+                                {% else %}
+                                    {{ author.name }} |
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_book' book.id %}" class="btn btn-sm btn-warning">编辑</a>
+                            <a edit_id="{{ book.id }}" class="btn btn-sm btn-danger">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </thead>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+{% csrf_token %}
+<script>
+    $(".btn-danger").click(function () {
+        _this = $(this);
+
+        swal({
+                title: "确定删除吗？",
+                text: "你将无法恢复该虚拟文件！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定删除！",
+                cancelButtonText: "取消删除！",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    swal("删除！", "你的虚拟文件已经被删除。",
+                        "success");
+                    $.ajax({
+                        url: "{% url 'del_book' %}",
+                        type: 'post',
+                        data: {
+                            del_id: _this.attr('edit_id'),
+                            csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                        },
+                        success: function (data) {
+                            var data = JSON.parse(data);
+                            if (data.status){
+                                _this.parent().parent().remove();
+                            }else{
+                                window.location=data.url
+                            }
+
+                        }
+                    })
+                } else {
+                    swal("取消！", "你的虚拟文件是安全的:)",
+                        "error");
+                }
+            });
+
+
+    })
+</script>
+
+</body>
+</html>

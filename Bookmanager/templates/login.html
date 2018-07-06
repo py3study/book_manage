@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/plugins/login_css_js/style.css">
+    <script src="/static/plugins/login_css_js/jquery.js"></script>
+    <script src="/static/plugins/login_css_js/Particleground.js"></script>
+    <script src="/static/plugins/login_css_js/verificationNumbers.js"></script>
+    <style>
+        body {
+            height: 100%;
+            background: #16a085;
+            overflow: hidden;
+        }
+
+        canvas {
+            z-index: -1;
+            position: absolute;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            //粒子背景特效
+            $('body').particleground({
+                dotColor: '#5cbdaa',
+                lineColor: '#5cbdaa'
+            });
+
+        });
+    </script>
+</head>
+<body>
+<canvas class="pg-canvas" width="994" height="370"></canvas>
+<dl class="admin_login">
+    <dt>
+        <strong>站点后台管理系统</strong>
+        <em>Management System</em>
+    </dt>
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <dd class="user_icon">
+            <input type="text" placeholder="账号" class="login_txtbx" name="name">
+        </dd>
+        <dd class="pwd_icon">
+            <input type="password" placeholder="密码" class="login_txtbx" name="pwd">
+        </dd>
+        <dd>
+        <input type="submit" value="立即登陆" class="submit_btn">
+    </dd>
+    </form>
+
+</dl>
+
+
+</body>
+</html>
